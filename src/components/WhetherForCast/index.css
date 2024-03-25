@@ -1,0 +1,46 @@
+.main {
+    color: #EB6E4B
+}
+.buttonStyles{
+    margin: 10px !important;
+    border: 1px solid #EB6E4B !important;
+}
+.input{
+    margin-right: 10px;
+}
+.eachCard {
+    width: 20%;
+    padding: 5px;
+}
+.eachCardStyles{
+    border: 1px solid ;
+}
+.boxStyles{
+    border-bottom: 1px solid ;
+}
+@media screen and (min-width: 100px) and (max-width: 900px) {
+    .eachCard {
+        width: 100%;
+    }
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  td, th {
+    border: 1px solid #dddddd;
+    text-align: center;
+    padding: 8px;
+  }
+  .firstBox{
+    background-color: #e75026;
+  }
+  .otherBoxes{
+    background-color: grey;
+  }
+
+  /* tr:nth-child(even) {
+    background-color: #dddddd;
+  } */
+
