@@ -18,6 +18,12 @@
 .boxStyles{
     border-bottom: 1px solid ;
 }
+.MuiInputBase-input{
+    padding: 7px !important;
+}
+.MuiFormControl-root {
+    margin-top: 10px !important;
+}
 @media screen and (min-width: 100px) and (max-width: 900px) {
     .eachCard {
         width: 100%;

@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import axios from 'axios'
 import HelpOutlinedIcon from '@mui/icons-material/HelpOutlined';
-import {Button, Grid, Typography, Input, CircularProgress } from '@mui/material'
+import {Button, Grid, Typography, CircularProgress } from '@mui/material'
+import TextField from '@mui/material/TextField';
 import '../WhetherForCast/index.css'
 
 
@@ -58,7 +59,7 @@ const WeatherForCast = () => {
         </Grid>
         <Grid item xs={12} md={6}>
           <form onSubmit={handleSubmit}>
-            <Input
+            <TextField
               type="text"
               variant="outlined"
               placeholder="Enter city name"
