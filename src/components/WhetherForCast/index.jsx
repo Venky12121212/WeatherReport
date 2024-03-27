@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import axios from 'axios'
 import HelpOutlinedIcon from '@mui/icons-material/HelpOutlined';
 import {Button, Grid, Typography, CircularProgress } from '@mui/material'
@@ -19,26 +19,69 @@ const WeatherForCast = () => {
 
     // const classes = useStyles();
 
+    const groupByDays = (data) => {
+        return (data.reduce((list, item) => {
+          const forecastDate = item.dt_txt.split(' ')[0];
+          list[forecastDate] = list[forecastDate] || [];
+          list[forecastDate].push(item);
+          return list;
+        }, {}))
+      }
+
+      const getInfo = (data, min=[], max=[], humidity=[], pressure=[]) => {
+        data.map(item => {
+          max.push(item.main.temp_max);
+          min.push(item.main.temp_min);
+          humidity.push(item.main.humidity);
+          pressure.push(item.main.pressure)
+        });
+
+        const minMax = {
+          min: Math.round(Math.min(...min)),
+          max: Math.round(Math.max(...max)),
+        };
+
+        const avgHumdity = Math.round(humidity.reduce((curr, next) => curr + next) / humidity.length);
+
+        const avgPressure = Math.round(pressure.reduce((curr, next) => curr + next) / pressure.length);
+        return (
+          <div className="weather-info">
+            <table>
+              <tr className="otherBoxes">
+                <th>Min</th>
+                <th>Max</th>
+              </tr>
+              <tr className="otherBoxes">
+                <td>{minMax.max} C</td>
+                <td>{minMax.min} C</td>
+              </tr>
+              <tr>
+                <td>Humidity</td>
+                <td>{avgHumdity}%</td>
+              </tr>
+              <tr>
+                <td>Pressure</td>
+                <td>{avgPressure}</td>
+              </tr>
+            </table>
+          </div>
+        );
+      };
+
   const fetchData = async () => {
     setLoader(true)
     try {
-      const response1 = await axios.get(
-        `http://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=5&units=metric&appid=7fc2842f3d3ebd026930df080bb7ad5b`
+      const response = await axios.get(
+        `http://api.openweathermap.org/data/2.5/forecast?q=${city}&limit=5&units=metric&appid=7fc2842f3d3ebd026930df080bb7ad5b`
       );
-      const response2 = await axios.get(
-        `http://api.openweathermap.org/data/2.5/forecast?lat=${response1.data[0].lat}&lon=${response1.data[0].lon}&limit=5&appid=7fc2842f3d3ebd026930df080bb7ad5b`
-      );
-      setWeatherData(response2.data);
+      const tiles = Object.values(groupByDays(response?.data?.list));
+      setWeatherData(tiles);
       setLoader(false)
     } catch (error) {
       console.error(error);
       setLoader(false)
     }
   };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   const handleInputChange = (e) => {
     setCity(e.target.value);
@@ -76,36 +119,18 @@ const WeatherForCast = () => {
         <Grid item xs={12}>
           <Grid container direction="row">
             {weatherData ? (
-              weatherData.list.slice(0, 5).map((item, index) => {
+              weatherData.slice(0, 5).map((item, index) => {
                 return (
                   <Grid item className="eachCard">
                     <div className="eachCardStyles">
                       <Typography variant="h6" className="boxStyles firstBox">
-                        {" "}
-                        Date : {item.dt_txt.split(" ")[0]}
+                        Date : {new Date(item[0].dt * 1000).getUTCDate()} / {new Date(item[0].dt * 1000).getUTCMonth() + 1} / {new Date(item[0].dt* 1000).getFullYear()}
                       </Typography>
                       <Typography variant="h6" className="boxStyles otherBoxes">
                         {" "}
                         Temperature
                       </Typography>
-                      <table>
-                        <tr className='otherBoxes'>
-                          <th>Min</th>
-                          <th>Max</th>
-                        </tr>
-                        <tr className='otherBoxes'>
-                          <td>{item.main.temp_max} C</td>
-                          <td>{item.main.temp_min} C</td>
-                        </tr>
-                        <tr>
-                          <td>Humidity</td>
-                          <td>{item.main.humidity}%</td>
-                        </tr>
-                        <tr>
-                          <td>Pressure</td>
-                          <td>{item.main.pressure}</td>
-                        </tr>
-                      </table>
+                      {getInfo(item)}
                     </div>
                   </Grid>
                 );
